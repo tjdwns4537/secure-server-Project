@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+h1{
+    size: 200px;
+    color:red;
+}
+
+#banner_image{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin: 0 0 240px 0;
+}
+
+#slide_move_section {
+    position: absolute;
+    left: 50%;
+    top: 123%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+}
+
+#rowSort{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin: 0 0 30px 0;
+}
+
+#login_box{
+    position: absolute;
+    right: 1%;
+}
+
+footer{
+    padding: 20px 50px 20px 50px;
+    background: #6c757d;
+    color: #f0f0f0;
+    height: 200px;
+}

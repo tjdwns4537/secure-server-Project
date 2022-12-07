@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+            href="../css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2>멤버 목록</h2>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary float-end"
+                    onclick="location.href='addForm.html'"
+                    th:onclick="|location.href='@{/member/add}'|"
+                    type="button">멤버 등록</button>
+        </div>
+    </div>
+
+    <hr class="my-4">
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>식별 번호</th>
+                <th>회원 이름</th>
+                <th>회원 아이디</th>
+                <th>휴대폰 번호</th>
+                <th>password</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="member : ${members}">
+                <td><a href="member.html" th:href="@{/join/memberView/{id}(id=${member.id})}" th:text="${member.id}">회원 식별번호</a></td>
+                <td th:text="${member.memberName}">이름</a></td>
+                <td th:text="${member.memberId}">아이디</a></td>
+                <td th:text="${member.phoneNumber}">휴대폰 번호</td>
+                <td th:text="${member.memberPassword}">password</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div> <!-- /container -->
+
+</body>
+</html>
