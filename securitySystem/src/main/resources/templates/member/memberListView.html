@@ -15,8 +15,8 @@
     <div class="row">
         <div class="col">
             <button class="btn btn-primary float-end"
-                    onclick="location.href='addForm.html'"
-                    th:onclick="|location.href='@{/member/add}'|"
+                    onclick="location.href='join.html'"
+                    th:onclick="|location.href='@{/member/join}'|"
                     type="button">멤버 등록</button>
         </div>
     </div>
@@ -30,16 +30,14 @@
                 <th>회원 이름</th>
                 <th>회원 아이디</th>
                 <th>휴대폰 번호</th>
-                <th>password</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="member : ${members}">
-                <td><a href="member.html" th:href="@{/join/memberView/{id}(id=${member.id})}" th:text="${member.id}">회원 식별번호</a></td>
-                <td th:text="${member.memberName}">이름</a></td>
-                <td th:text="${member.memberId}">아이디</a></td>
-                <td th:text="${member.phoneNumber}">휴대폰 번호</td>
-                <td th:text="${member.memberPassword}">password</td>
+                <td><a href="member.html" th:href="@{/member/memberListView/{id}(id=${member.id})}" th:text="${member.id}">회원 식별번호</a></td>
+                <td th:text="${member.name}">이름</a></td>
+                <td th:text="${member.email}">이메일</a></td>
+                <td th:text="${member.phoneNumber}">휴대폰번호</td>
             </tr>
             </tbody>
         </table>
