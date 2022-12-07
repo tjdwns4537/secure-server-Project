@@ -22,17 +22,26 @@
     <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>
 
     <div>
-        <label for="memberId">회원ID</label>
-        <input type="text" id="memberId" name="memberId" class="form-control" value="1" th:value="${member.memberId}" readonly>
+        <label for="userId">회원ID</label>
+        <input type="text" id="userId" name="userId" class="form-control" value="1" th:value="${member.userId}" readonly>
     </div>
+
     <div>
-        <label for="memberName">회원이름</label>
-        <input type="text" id="memberName" name="memberName" class="form-control" value="이름" th:value="${member.memberName}" readonly>
+        <label for="email">회원이메일</label>
+        <input type="text" id="email" name="email" class="form-control" value="이메일" th:value="${member.email}" readonly>
     </div>
+
+
     <div>
-        <label for="memberPassword">비밀번호</label>
-        <input type="text" id="memberPassword" name="memberPassword" class="form-control" value="비밀번호" th:value="${member.memberPassword}" readonly>
+        <label for="password">비밀번호</label>
+        <input type="text" id="password" name="password" class="form-control" value="비밀번호" th:value="${member.password}" readonly>
     </div>
+
+    <div>
+        <label for="name">회원이름</label>
+        <input type="text" id="name" name="name" class="form-control" value="이름" th:value="${member.name}" readonly>
+    </div>
+
     <div>
         <label for="phoneNumber">휴대폰 번호</label>
         <input type="text" id="phoneNumber" name="phoneNumber" class="form-control" value="휴대폰번호" th:value="${member.phoneNumber}" readonly>
@@ -42,16 +51,10 @@
 
     <div class="row">
         <div class="col">
-            <button class="w-100 btn btn-primary btn-lg"
-                    onclick="location.href='editForm.html'"
-                    th:onclick="|location.href='@{/join/memberUpdate/{memberId}/edit(memberId=${member.id})}'|"
-                    type="button">회원 수정</button>
-        </div>
-        <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
-                    onclick="location.href='members.html'"
-                    th:onclick="|location.href='@{/join/members}'|"
-                    type="button">목록으로</button>
+                    onclick="location.href='memberListView.html'"
+                    th:onclick="|location.href='@{/join/memberListView}'|"
+                    type="button">회원 목록</button>
         </div>
     </div>
 
