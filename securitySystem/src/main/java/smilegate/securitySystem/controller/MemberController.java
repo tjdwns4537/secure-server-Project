@@ -60,12 +60,4 @@ public class MemberController {
         model.addAttribute("members", allMember);
         return "/member/memberListView";
     }
-
-//    @PostConstruct
-//    public void tempMember() {
-//        memberRepository.save(new Member("성준", "전사","tjdwns1@email.com", "1234", "4537"));
-//        memberRepository.save(new Member("정각", "누구세요","jun@email.com", "2345", "1234"));
-//        memberRepository.save(new Member("숭어", "부산","aksk@email.com", "3456", "2345"));
-//        memberRepository.save(new Member("성준", "북대생","tjdwns2@email.com", "1234", "4537"));
-//    }
 }

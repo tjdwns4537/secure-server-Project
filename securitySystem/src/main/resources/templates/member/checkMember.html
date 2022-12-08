@@ -53,8 +53,14 @@
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
                     onclick="location.href='memberListView.html'"
-                    th:onclick="|location.href='@{/join/memberListView}'|"
+                    th:onclick="|location.href='@{/member/memberList}'|"
                     type="button">회원 목록</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    onclick="location.href='index.html'"
+                    th:onclick="|location.href='@{/main}'|"
+                    type="button">메인으로</button>
         </div>
     </div>
 
