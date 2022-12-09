@@ -13,6 +13,7 @@ import smilegate.securitySystem.repository.MemberRepositoryInterface;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -71,42 +72,41 @@ public class MemberController {
         return false;
     }
 
+    public boolean passErrorCheck(String str) {
+        if(!str.equals("Pass")) return true;
+        return false;
+    }
+
     public void inputErrorCheck(String name, String password1, String phoneNumber, String password2) {
-        if(nameErrorCheck(name)){
-            error.put("nameError", "이름 규칙이 맞지 않습니다");
-        }
-        if (phoneNumberErrorCheck(phoneNumber)) {
-            error.put("phoneNumberError", "연락처 규칙이 맞지 않습니다.");
-        }
-        if (passwordErrorCheck(password1, password2)) {
-            error.put("passwordError", "비밀번호 규칙이 맞지 않습니다.");
-        }
+        nameErrorCheck(name);
+        phoneNumberErrorCheck(phoneNumber);
+        passwordErrorCheck(password1, password2);
     }
 
-    public boolean nameErrorCheck(String str) {
-        return !StringUtils.hasText(str) || StringUtils.containsWhitespace(str) || str.length() > 12;
+    public void nameErrorCheck(String str) {
+        if(!StringUtils.hasText(str)) error.put("nameError", "이름이 비어있습니다.");
+        if(StringUtils.containsWhitespace(str)) error.put("nameError", "이름에 공백이 들어있습니다.");
+        if(str.length() > 12) error.put("nameError", "이름에 길이가 12자가 넘습니다.");
     }
 
-    public boolean phoneNumberErrorCheck(String str){
-        return str.contains("-") || str.length() != 11;
+    public void phoneNumberErrorCheck(String str){
+        if(str.contains("-")) error.put("phoneNumberError", "연락처에 하이폰이 들어가 있습니다.");
+        if(str.length() != 11) error.put("phoneNumberError", "연락처 길이가 11자리가 아닙니다.");
     }
 
-    public boolean passwordErrorCheck(String pw1, String pw2 ){
-        if(stringContainErrorCheck(pw1)) log.debug("pwContainError : {}","contain");
-        if(passwordEqualError(pw1,pw2)) log.debug("pwEqualError:{}","eqaul");
-        if(stringContainErrorCheck(pw1) || passwordEqualError(pw1, pw2)) return true;
-        return false;
-    }
-
-    public boolean stringContainErrorCheck(String str) {
-        String pattern = "^[a-zA-Z0-9]+[!@#$%^&*]+$";
-        boolean result = Pattern.matches(pattern, str);
-        if(!result) return true;
-        return false;
+    public void passwordErrorCheck(String pw1, String pw2 ){
+        if(isValidPassword(pw1)) error.put("passwordError", "비밀번호 형식이 맞지 않습니다.");
+        if(passwordEqualError(pw1, pw2)) error.put("passwordError", "비밀번호와 재확인 비밀번호가 다릅니다.");
     }
 
     public boolean passwordEqualError(String pw1,String pw2) {
         if(!pw1.equals(pw2)) return true;
         return false;
+    }
+
+    public boolean isValidPassword(String password) {
+        String rex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$";
+        boolean result = Pattern.matches(rex, rex);
+        return result;
     }
 }
