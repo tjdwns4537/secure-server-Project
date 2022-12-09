@@ -35,7 +35,7 @@ public class MemberController {
         if(hasError()){
             log.info("log info:{}", error);
             model.addAttribute("error", error);
-            return "/join";
+            return "/member/join";
         }
         memberRepository.save(member);
         redirectAttributes.addAttribute("memberId", member.getId());
@@ -72,11 +72,6 @@ public class MemberController {
         return false;
     }
 
-    public boolean passErrorCheck(String str) {
-        if(!str.equals("Pass")) return true;
-        return false;
-    }
-
     public void inputErrorCheck(String name, String password1, String phoneNumber, String password2) {
         nameErrorCheck(name);
         phoneNumberErrorCheck(phoneNumber);
@@ -106,7 +101,8 @@ public class MemberController {
 
     public boolean isValidPassword(String password) {
         String rex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$";
-        boolean result = Pattern.matches(rex, rex);
-        return result;
+        boolean result = Pattern.matches(rex, password);
+        if(!result) return true;
+        return false;
     }
 }
