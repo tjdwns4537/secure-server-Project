@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lnag="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>이메일 인증하기</title>
+    <link rel="stylesheet" th:href="@{/css/join.css}">
+</head>
+<body>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    function goParnet(){
+        opener.document.getElementById("email-check").value = document.getElementById("child-email-check").value
+    }
+</script>
+<div>
+    <h3 class="join_title">인증 번호</h3>
+    <input type="text" name="child-email-check" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
+</div>
+<button type="button" onclick="goParent()"> 인증하기 </button>
+
+</body>
+
+</html>

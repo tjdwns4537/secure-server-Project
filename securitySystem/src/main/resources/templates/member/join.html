@@ -5,8 +5,16 @@
     <title> 회원가입 </title>
     <link rel="stylesheet" th:href="@{/css/join.css}">
 
+    <style>
+        #if{
+            width:0px;
+            height: 0px;
+            border: 0px;
+        }
+    </style>
 </head>
 <body>
+<script th:src="@{/js/main.js}"></script>
 <!-- header -->
 <div id="header">
     <a th:href="@{/member/join}" title="회원가입 페이지"><img th:src="@{/Image/smilegatelogo.png}" id="logo"></a>
@@ -18,33 +26,34 @@
     <!-- content-->
     <div id="content">
 
-        <form th:action="@{/member/emailConfirm}" method="post">
-            <!-- EMAIL -->
+        <!-- EMAIL -->
+        <form th:action="@{/member/emailConfirm}" method="post" target="param">
             <div>
                 <h3 class="join_title"><label for="email">이메일</label></h3>
                 <span class="box int_email">
                         <input type="text" name="email" id="email"
-                               th:class="${error?.containsKey('email')} ? 'form-control field-error' : 'form-control'"
                                class="form-control" maxlength="100">
                     </span>
-                <div class="field-error" th:if="${error?.containsKey('email')}" th:text="${error['email']}">
-                    이메일 오류
-                </div>
             </div>
 
             <!-- 이메일 인증 번호 요청 버튼 -->
-            <button type="submit" id="emailbtn">
-                <span>인증번호 요청</span>
-            </button>
-
-            <!-- EMAIL CHECK -->
-            <div>
-                <h3 class="join_title">인증 번호</h3>
-                <input type="text" name="email" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
-            </div>
-
+            <input type="submit"
+                   value="인증번호받기"
+                    id="email-btn"
+            />
         </form>
+        <iframe id="if" name="param"></iframe>
+        <script>
+            function button_click(){
+                window.open('/member/emailpopup','이메일 인증하기','width=500px, height=250px');
+            }
+        </script>
 
+
+        <div>
+            <h3 class="join_title">인증 번호</h3>
+            <input type="text" name="email-check" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
+        </div>
 
         <form th:action="@{/member/join}" th:object="${member}" method="post">
 
@@ -104,7 +113,6 @@
                 <span class="error_next_box"></span>
             </div>
 
-
             <!-- JOIN BTN-->
             <div class="btn_area">
                 <button type="submit" id="btnJoin">
@@ -120,6 +128,6 @@
 
 </div>
 <!-- wrapper -->
-<script th:src="@{/js/main.js}"></script>
 </body>
+
 </html>

@@ -23,7 +23,8 @@ import java.util.regex.Pattern;
 @RequestMapping("/member")
 public class MemberController {
 
-    EmailServiceImp emailService = new EmailServiceImp();
+    @Autowired
+    EmailServiceImp emailService;
 
     Map<String, String> error = new HashMap<>();
     MemberRepositoryInterface memberRepository = MemberRepositoryImp.getInstance();
@@ -73,10 +74,14 @@ public class MemberController {
 
     @PostMapping("/emailConfirm")
     @ResponseBody
-    public void emailConfirm(String email) throws Exception {
-
+    public void emailVerify(@RequestParam String email) throws Exception {
         log.info("post email = {}", email);
-        String confirm = emailService.sendSimpleMessage(email);
+        emailService.sendSimpleMessage(email);
+    }
+
+    @GetMapping("/emailpopup")
+    public String emailConfirm(){
+        return "/member/emailpopup";
     }
 
     @PostMapping("/verifyCode")
@@ -90,7 +95,6 @@ public class MemberController {
         }
         return result;
     }
-
 
     public boolean hasError() {
         if(!error.isEmpty()) return true;
