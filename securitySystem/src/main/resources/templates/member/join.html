@@ -9,23 +9,27 @@
 <body>
 <!-- header -->
 <div id="header">
-    <a th:href="@{/member/join.html}" title="회원가입 페이지"><img th:src="@{/Image/smilegatelogo.png}" id="logo"></a>
+    <a th:href="@{/member/join}" title="회원가입 페이지"><img th:src="@{/Image/smilegatelogo.png}" id="logo"></a>
 </div>
-
 
 <!-- wrapper -->
 <div id="wrapper">
 
     <!-- content-->
     <div id="content">
-        <form th:action="@{/member/join}" method="post">
+        <form th:action="@{/member/join}" th:object="${member}" method="post">
+
+            <div th:if="${error?.containsKey('globalError')}">
+                <p class="field-error" th:text="${error['globalError']}">전체 오류 메시지</p>
+            </div>
+
             <!-- ID -->
             <div>
                 <h3 class="join_title">
                     <label for="id">아이디</label>
                 </h3>
                 <span class="box int_id">
-                        <input type="text" name="userId" id="id" class="int" maxlength="20">
+                        <input type="text" name="userId" id="id" class="form-control" maxlength="20">
                 </span>
                 <span class="error_next_box"></span>
             </div>
@@ -34,7 +38,7 @@
             <div>
                 <h3 class="join_title"><label for="pswd1">비밀번호</label></h3>
                 <span class="box int_pass">
-                        <input type="text" name="password" id="pswd1" class="int" maxlength="20">
+                        <input type="text" name="password" id="pswd1" class="form-control" maxlength="20">
                         <span id="alertTxt">사용불가</span>
                         <img th:src="@{/Image/m_icon_pass.png}" id="pswd1_img1" class="pswdImg">
                     </span>
@@ -45,7 +49,7 @@
             <div>
                 <h3 class="join_title"><label for="pswd2">비밀번호 재확인</label></h3>
                 <span class="box int_pass_check">
-                        <input type="text" name="password2" id="pswd2" class="int" maxlength="20">
+                        <input type="text" name="password2" id="pswd2" class="form-control" maxlength="20">
                         <img th:src="@{/Image/m_icon_check_disable.png}" id="pswd2_img1" class="pswdImg">
                     </span>
                 <span class="error_next_box"></span>
@@ -53,27 +57,48 @@
 
             <!-- NAME -->
             <div>
-                <h3 class="join_title"><label for="name">이름</label></h3>
+                <h3 class="join_title">
+                    <label for="name">이름</label></h3>
                 <span class="box int_name">
-                        <input type="text" name="name" id="name" class="int" maxlength="20">
-                    </span>
-                <span class="error_next_box"></span>
+                        <input type="text" name="name" id="name"
+                               class="form-control" maxlength="12">
+                </span>
+<!--                <span class="error_next_box"></span>-->
             </div>
 
             <!-- EMAIL -->
             <div>
-                <h3 class="join_title"><label for="email">본인확인 이메일<span class="optional">(선택)</span></label></h3>
+                <h3 class="join_title"><label for="email">이메일</label></h3>
                 <span class="box int_email">
-                        <input type="text" name="email" id="email" class="int" maxlength="100" placeholder="선택입력">
+                        <input type="text" name="email" id="email"
+                               th:class="${error?.containsKey('email')} ? 'form-control field-error' : 'form-control'"
+                               class="form-control" maxlength="100">
                     </span>
-                <span class="error_next_box">이메일 주소를 다시 확인해주세요.</span>
+                <div class="field-error" th:if="${error?.containsKey('email')}" th:text="${error['email']}">
+                    이메일 오류
+                </div>
+<!--                <span class="error_next_box">이메일 주소를 다시 확인해주세요.</span>-->
             </div>
+
+<!--            <div class="email_btn_area">-->
+<!--                <button type="submit" id="emailbtn">-->
+<!--                    <span>인증번호 요청</span>-->
+<!--                </button>-->
+<!--            </div>-->
+
+            <!-- EMAIL CHECK -->
+<!--            <div>-->
+<!--                <h3 class="join_title">인증 번호</h3>-->
+<!--                <span class="box int_email">-->
+<!--                        <input type="text" name="email" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">-->
+<!--                </span>-->
+<!--            </div>-->
 
             <!-- MOBILE -->
             <div>
                 <h3 class="join_title"><label for="mobile">휴대전화</label></h3>
                 <span class="box int_mobile">
-                        <input type="tel" name="phoneNumber" id="mobile" class="int" maxlength="16" placeholder="전화번호 입력">
+                        <input type="tel" name="phoneNumber" id="mobile" class="form-control" maxlength="16" placeholder="전화번호 입력">
                     </span>
                 <span class="error_next_box"></span>
             </div>

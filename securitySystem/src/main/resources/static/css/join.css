@@ -48,6 +48,11 @@ h3 {
     font-weight: 700;
 }
 
+.field-error{
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
 
 .box {
     display: block;
@@ -60,7 +65,7 @@ h3 {
     position: relative;
 }
 
-.int {
+.form-control {
     display: block;
     position: relative;
     width: 100%;
@@ -168,6 +173,12 @@ select {
 
 .btn_area {
     margin: 30px 0 91px;
+}
+
+.email_btn_area{
+    position: absolute;
+    top:50%;
+    left:50%;
 }
 
 #btnJoin {

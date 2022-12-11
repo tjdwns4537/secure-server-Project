@@ -20,6 +20,7 @@ var dd = document.querySelector('#dd');
 var gender = document.querySelector('#gender');
 
 var email = document.querySelector('#email');
+// var emailcheck = document.querySelector('#emailcheck');
 
 var mobile = document.querySelector('#mobile');
 
@@ -186,7 +187,6 @@ function isEmailCorrect() {
     } else {
         error[6].style.display = "none";
     }
-
 }
 
 function checkPhoneNum() {

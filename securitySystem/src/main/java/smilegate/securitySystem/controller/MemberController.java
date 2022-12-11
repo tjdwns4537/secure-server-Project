@@ -13,7 +13,6 @@ import smilegate.securitySystem.repository.MemberRepositoryInterface;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -31,7 +30,7 @@ public class MemberController {
 
     @PostMapping("/join")
     public String joinExecute(@RequestParam String password2, Member member, RedirectAttributes redirectAttributes, Model model) {
-        inputErrorCheck(member.getName(), member.getPassword(), member.getPhoneNumber(), password2);
+        inputErrorCheck(member.getName(), member.getPassword(), member.getPhoneNumber(), password2, member.getEmail());
         if(hasError()){
             log.info("log info:{}", error);
             model.addAttribute("error", error);
@@ -72,16 +71,21 @@ public class MemberController {
         return false;
     }
 
-    public void inputErrorCheck(String name, String password1, String phoneNumber, String password2) {
+    public void inputErrorCheck(String name, String password1, String phoneNumber, String password2, String email) {
         nameErrorCheck(name);
         phoneNumberErrorCheck(phoneNumber);
         passwordErrorCheck(password1, password2);
+        emailErrorCheck(email);
+    }
+
+    public void emailErrorCheck(String str) {
+        if(!StringUtils.hasText(str)) error.put("globalError", "이메일이 비어있습니다.");
     }
 
     public void nameErrorCheck(String str) {
-        if(!StringUtils.hasText(str)) error.put("nameError", "이름이 비어있습니다.");
+        if(!StringUtils.hasText(str)) error.put("globalError", "이름이 비어있습니다.");
         if(StringUtils.containsWhitespace(str)) error.put("nameError", "이름에 공백이 들어있습니다.");
-        if(str.length() > 12) error.put("nameError", "이름에 길이가 12자가 넘습니다.");
+        if(str.length() > 12) error.put("nameError", "이름 길이가 12자가 넘습니다.");
     }
 
     public void phoneNumberErrorCheck(String str){

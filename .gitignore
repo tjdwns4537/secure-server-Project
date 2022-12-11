@@ -1,6 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,java
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,java
 
+# Config
+*.properties
+
+
 ### Java ###
 # Compiled class file
 *.class
