@@ -17,6 +17,35 @@
 
     <!-- content-->
     <div id="content">
+
+        <form th:action="@{/member/emailConfirm}" method="post">
+            <!-- EMAIL -->
+            <div>
+                <h3 class="join_title"><label for="email">이메일</label></h3>
+                <span class="box int_email">
+                        <input type="text" name="email" id="email"
+                               th:class="${error?.containsKey('email')} ? 'form-control field-error' : 'form-control'"
+                               class="form-control" maxlength="100">
+                    </span>
+                <div class="field-error" th:if="${error?.containsKey('email')}" th:text="${error['email']}">
+                    이메일 오류
+                </div>
+            </div>
+
+            <!-- 이메일 인증 번호 요청 버튼 -->
+            <button type="submit" id="emailbtn">
+                <span>인증번호 요청</span>
+            </button>
+
+            <!-- EMAIL CHECK -->
+            <div>
+                <h3 class="join_title">인증 번호</h3>
+                <input type="text" name="email" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
+            </div>
+
+        </form>
+
+
         <form th:action="@{/member/join}" th:object="${member}" method="post">
 
             <div th:if="${error?.containsKey('globalError')}">
@@ -65,34 +94,6 @@
                 </span>
 <!--                <span class="error_next_box"></span>-->
             </div>
-
-            <!-- EMAIL -->
-            <div>
-                <h3 class="join_title"><label for="email">이메일</label></h3>
-                <span class="box int_email">
-                        <input type="text" name="email" id="email"
-                               th:class="${error?.containsKey('email')} ? 'form-control field-error' : 'form-control'"
-                               class="form-control" maxlength="100">
-                    </span>
-                <div class="field-error" th:if="${error?.containsKey('email')}" th:text="${error['email']}">
-                    이메일 오류
-                </div>
-<!--                <span class="error_next_box">이메일 주소를 다시 확인해주세요.</span>-->
-            </div>
-
-<!--            <div class="email_btn_area">-->
-<!--                <button type="submit" id="emailbtn">-->
-<!--                    <span>인증번호 요청</span>-->
-<!--                </button>-->
-<!--            </div>-->
-
-            <!-- EMAIL CHECK -->
-<!--            <div>-->
-<!--                <h3 class="join_title">인증 번호</h3>-->
-<!--                <span class="box int_email">-->
-<!--                        <input type="text" name="email" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">-->
-<!--                </span>-->
-<!--            </div>-->
 
             <!-- MOBILE -->
             <div>
