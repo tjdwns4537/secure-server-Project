@@ -34,25 +34,28 @@ public class MemberController {
     String globalEmail;
 
     @GetMapping("/join")
-    public String joinPage() {
+    public String joinPage(Model model) {
+        emailCheckFlag = false;
+        model.addAttribute("member", new Member());
         return "/member/join";
     }
 
     @PostMapping("/join")
     public String joinExecute(
+            @ModelAttribute Member member,
             @RequestParam String password2,
-            Member member,
             RedirectAttributes redirectAttributes,
             Model model) {
-        inputErrorCheck(member.getName(), member.getPassword(), member.getPhoneNumber(), password2, member.getEmail());
-        if(hasError() || !emailCheckFlag){
+        error.clear();
+        inputErrorCheck(member.getUserId(), member.getName(), member.getPassword(), member.getPhoneNumber(), password2, member.getEmail());
+        if(hasError()){
             log.info("log info:{}", error);
             model.addAttribute("error", error);
             return "/member/join";
         }
         member.setEmail(globalEmail);
-        memberRepository.save(member);
-        redirectAttributes.addAttribute("memberId", member.getId());
+        Member saveMember = memberRepository.save(member);
+        redirectAttributes.addAttribute("memberId", saveMember.getId());
         redirectAttributes.addAttribute("status", true);
         return "redirect:/member/" + member.getId();
     }
@@ -81,13 +84,27 @@ public class MemberController {
         return "/member/memberListView";
     }
 
+    @GetMapping("/emailConfirm")
+    public String emailVerify(Model model) {
+        model.addAttribute("member", new Member());
+        return "/member/join";
+    }
+
     @PostMapping("/emailConfirm")
     @ResponseBody
-    public void emailVerify(@RequestParam String email) throws Exception {
+    public String emailVerify(@RequestParam String email, Model model) throws Exception {
+        error.clear();
+        emailErrorCheck(email);
+        if(hasError()){
+            log.info("log info:{}", error);
+            model.addAttribute("error", error);
+            return "/member/emailConfirm";
+        }
         globalEmail = email;
         log.info("post email = {}", email);
         String s = emailService.sendSimpleMessage(email);
         emailVerifyCode = s;
+        return "";
     }
 
     @PostMapping("/emailVerify")
@@ -110,24 +127,31 @@ public class MemberController {
         return false;
     }
 
-    public void inputErrorCheck(String name, String password1, String phoneNumber, String password2, String email) {
-        nameErrorCheck(name);
+    public void inputErrorCheck(String userId, String name, String password1, String phoneNumber, String password2, String email) {
+        nameEmptyErrorCheck(name);
+        nameRuleErrorCheck(name);
         phoneNumberErrorCheck(phoneNumber);
         passwordErrorCheck(password1, password2);
-        //emailErrorCheck(email);
         emailVerifyPassError();
+        userIdErrorCheck(userId);
     }
 
+    public void userIdErrorCheck(String str) {
+        if(!StringUtils.hasText(str)) error.put("userIdError", "아이디를 입력해야합니다.");
+    }
     public void emailVerifyPassError(){
-        if(!emailCheckFlag) error.put("emailError", "email 검증을 완료해야합니다.");
+        if(!emailCheckFlag) error.put("emailVerifyError", "email 검증을 완료해야합니다.");
     }
 
     public void emailErrorCheck(String str) {
-        if(!StringUtils.hasText(str)) error.put("globalError", "이메일이 비어있습니다.");
+        if(!StringUtils.hasText(str)) error.put("emailError", "이메일이 비어있습니다.");
     }
 
-    public void nameErrorCheck(String str) {
-        if(!StringUtils.hasText(str)) error.put("globalError", "이름이 비어있습니다.");
+    public void nameEmptyErrorCheck(String str) {
+        if(!StringUtils.hasText(str)) error.put("nameError", "이름이 비어있습니다.");
+    }
+
+    public void nameRuleErrorCheck(String str){
         if(StringUtils.containsWhitespace(str)) error.put("nameError", "이름에 공백이 들어있습니다.");
         if(str.length() > 12) error.put("nameError", "이름 길이가 12자가 넘습니다.");
     }
@@ -143,6 +167,8 @@ public class MemberController {
     }
 
     public boolean passwordEqualError(String pw1,String pw2) {
+        log.info("비밀번호1 : {}", pw1);
+        log.info("비밀번호2 : {}", pw2);
         if(!pw1.equals(pw2)) return true;
         return false;
     }

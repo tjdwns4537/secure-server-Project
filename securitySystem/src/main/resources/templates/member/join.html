@@ -27,27 +27,25 @@
     <div id="content">
         <iframe id="if" name="param"></iframe>
         <!-- EMAIL -->
-        <form th:action="@{/member/emailConfirm}" method="post" target="param">
+        <form th:action="@{/member/emailConfirm}" th:object="${member}" method="post" target="param">
             <div>
                 <h3 class="join_title"><label for="email">이메일</label></h3>
                 <span class="box int_email">
                         <input type="text" name="email" id="email"
-                               class="form-control" maxlength="100">
+                               class="form-control" maxlength="100" th:field="*{email}">
                     </span>
+            </div>
+
+            <div class="field-error" th:if="${error?.containsKey('emailError')}" th:text="${error['emailError']}">
+                이메일 오류 메시지
             </div>
 
             <!-- 이메일 인증 번호 요청 버튼 -->
             <input type="submit"
                    value="인증번호받기"
-                   onclick="onclick()"
                    id="email-btn"
             />
         </form>
-        <script>
-            function onclick(){
-                document.getElementById("email-hidden").value = document.getElementById("email").value;
-            }
-        </script>
 
         <form th:action="@{/member/emailVerify}" method="post" target="param">
             <div>
@@ -60,17 +58,12 @@
                    value="인증번호 확인"
                    id="email-verify"
             />
+            <div class="field-error" th:if="${error?.containsKey('emailVerifyError')}" th:text="${error['emailVerifyError']}">
+                이메일 검증 오류 메시지
+            </div>
         </form>
 
-
         <form th:action="@{/member/join}" th:object="${member}" method="post">
-
-            <div th:if="${error?.containsKey('globalError')}">
-                <p class="field-error" th:text="${error['globalError']}">전체 오류 메시지</p>
-            </div>
-
-            <!-- email (hidden) -->
-<!--            <input type="text" name="emailHidden" id="email-hidden" class="form-control" maxlength="100">-->
 
             <!-- ID -->
             <div>
@@ -78,20 +71,27 @@
                     <label for="id">아이디</label>
                 </h3>
                 <span class="box int_id">
-                        <input type="text" name="userId" id="id" class="form-control" maxlength="20">
+                        <input type="text" name="userId" id="id" class="form-control" maxlength="20"
+                        th:field="*{userId}">
                 </span>
-                <span class="error_next_box"></span>
+                <div class="field-error" th:if="${error?.containsKey('userIdError')}" th:text="${error['userIdError']}">
+                    아이디 오류
+                </div>
             </div>
 
             <!-- PW1 -->
             <div>
                 <h3 class="join_title"><label for="pswd1">비밀번호</label></h3>
                 <span class="box int_pass">
-                        <input type="text" name="password" id="pswd1" class="form-control" maxlength="20">
+                        <input type="text" name="password" id="pswd1" class="form-control" maxlength="20"
+                        th:field="*{password}">
                         <span id="alertTxt">사용불가</span>
                         <img th:src="@{/Image/m_icon_pass.png}" id="pswd1_img1" class="pswdImg">
                     </span>
                 <span class="error_next_box"></span>
+                <div class="field-error" th:if="${error?.containsKey('passwordError')}" th:text="${error['passwordError']}">
+                    비밀번호 오류
+                </div>
             </div>
 
             <!-- PW2 -->
@@ -110,18 +110,23 @@
                     <label for="name">이름</label></h3>
                 <span class="box int_name">
                         <input type="text" name="name" id="name"
-                               class="form-control" maxlength="12">
+                               class="form-control" maxlength="12" th:field="*{name}">
                 </span>
-<!--                <span class="error_next_box"></span>-->
+                <div class="field-error" th:if="${error?.containsKey('nameError')}" th:text="${error['nameError']}">
+                    이름 오류
+                </div>
             </div>
 
             <!-- MOBILE -->
             <div>
                 <h3 class="join_title"><label for="mobile">휴대전화</label></h3>
                 <span class="box int_mobile">
-                        <input type="tel" name="phoneNumber" id="mobile" class="form-control" maxlength="16" placeholder="전화번호 입력">
+                        <input type="tel" name="phoneNumber" id="mobile" class="form-control" maxlength="16" placeholder="전화번호 입력"
+                               th:field="*{phoneNumber}">
                     </span>
-                <span class="error_next_box"></span>
+                <div class="field-error" th:if="${error?.containsKey('phoneNumberError')}" th:text="${error['phoneNumberError']}">
+                    휴대폰 번호 오류
+                </div>
             </div>
 
             <!-- JOIN BTN-->

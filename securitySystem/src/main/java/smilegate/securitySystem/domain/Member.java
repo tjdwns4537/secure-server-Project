@@ -1,9 +1,10 @@
 package smilegate.securitySystem.domain;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter @Setter @Data
 public class Member {
     private Long id;
     private String name;
@@ -11,6 +12,10 @@ public class Member {
     private String email;
     private String password;
     private String phoneNumber;
+
+    public Member() {
+
+    }
 
     public Member(String name, String userId, String email, String password, String phoneNumber) {
         this.name = name;
