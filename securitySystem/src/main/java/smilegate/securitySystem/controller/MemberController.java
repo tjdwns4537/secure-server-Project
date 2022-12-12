@@ -29,19 +29,28 @@ public class MemberController {
     Map<String, String> error = new HashMap<>();
     MemberRepositoryInterface memberRepository = MemberRepositoryImp.getInstance();
 
+    String emailVerifyCode;
+    boolean emailCheckFlag;
+    String globalEmail;
+
     @GetMapping("/join")
     public String joinPage() {
         return "/member/join";
     }
 
     @PostMapping("/join")
-    public String joinExecute(@RequestParam String password2, Member member, RedirectAttributes redirectAttributes, Model model) {
+    public String joinExecute(
+            @RequestParam String password2,
+            Member member,
+            RedirectAttributes redirectAttributes,
+            Model model) {
         inputErrorCheck(member.getName(), member.getPassword(), member.getPhoneNumber(), password2, member.getEmail());
-        if(hasError()){
+        if(hasError() || !emailCheckFlag){
             log.info("log info:{}", error);
             model.addAttribute("error", error);
             return "/member/join";
         }
+        member.setEmail(globalEmail);
         memberRepository.save(member);
         redirectAttributes.addAttribute("memberId", member.getId());
         redirectAttributes.addAttribute("status", true);
@@ -75,25 +84,25 @@ public class MemberController {
     @PostMapping("/emailConfirm")
     @ResponseBody
     public void emailVerify(@RequestParam String email) throws Exception {
+        globalEmail = email;
         log.info("post email = {}", email);
-        emailService.sendSimpleMessage(email);
+        String s = emailService.sendSimpleMessage(email);
+        emailVerifyCode = s;
     }
 
-    @GetMapping("/emailpopup")
-    public String emailConfirm(){
-        return "/member/emailpopup";
-    }
-
-    @PostMapping("/verifyCode")
+    @PostMapping("/emailVerify")
     @ResponseBody
-    public int verifyCode(String code) {
-        log.info("Post Verify = {}", code);
-        int result = 0;
-        String password = emailService.getEmailPassword();
-        if(password.equals(code)){
-            result = 1;
+    public void verifyCode(@RequestParam String emailCheck) {
+        log.info("Post Verify = {}", emailCheck);
+        if(!emailVerifyCode.equals(emailCheck)){
+            log.info("fail verify");
+            emailCheckFlag = false;
+            error.put("verifyError", "인증번호를 잘못 입력하셨습니다.");
         }
-        return result;
+        if(emailVerifyCode.equals(emailCheck)){
+            log.info("success verify");
+            emailCheckFlag = true;
+        }
     }
 
     public boolean hasError() {
@@ -105,7 +114,12 @@ public class MemberController {
         nameErrorCheck(name);
         phoneNumberErrorCheck(phoneNumber);
         passwordErrorCheck(password1, password2);
-        emailErrorCheck(email);
+        //emailErrorCheck(email);
+        emailVerifyPassError();
+    }
+
+    public void emailVerifyPassError(){
+        if(!emailCheckFlag) error.put("emailError", "email 검증을 완료해야합니다.");
     }
 
     public void emailErrorCheck(String str) {

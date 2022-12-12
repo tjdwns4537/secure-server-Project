@@ -25,7 +25,7 @@
 
     <!-- content-->
     <div id="content">
-
+        <iframe id="if" name="param"></iframe>
         <!-- EMAIL -->
         <form th:action="@{/member/emailConfirm}" method="post" target="param">
             <div>
@@ -39,27 +39,38 @@
             <!-- 이메일 인증 번호 요청 버튼 -->
             <input type="submit"
                    value="인증번호받기"
-                    id="email-btn"
+                   onclick="onclick()"
+                   id="email-btn"
             />
         </form>
-        <iframe id="if" name="param"></iframe>
         <script>
-            function button_click(){
-                window.open('/member/emailpopup','이메일 인증하기','width=500px, height=250px');
+            function onclick(){
+                document.getElementById("email-hidden").value = document.getElementById("email").value;
             }
         </script>
 
+        <form th:action="@{/member/emailVerify}" method="post" target="param">
+            <div>
+                <h3 class="join_title">인증 번호</h3>
+                <input type="text" name="emailCheck" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
+            </div>
 
-        <div>
-            <h3 class="join_title">인증 번호</h3>
-            <input type="text" name="email-check" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
-        </div>
+            <!-- 이메일 인증 번호 요청 버튼 -->
+            <input type="submit"
+                   value="인증번호 확인"
+                   id="email-verify"
+            />
+        </form>
+
 
         <form th:action="@{/member/join}" th:object="${member}" method="post">
 
             <div th:if="${error?.containsKey('globalError')}">
                 <p class="field-error" th:text="${error['globalError']}">전체 오류 메시지</p>
             </div>
+
+            <!-- email (hidden) -->
+<!--            <input type="text" name="emailHidden" id="email-hidden" class="form-control" maxlength="100">-->
 
             <!-- ID -->
             <div>
