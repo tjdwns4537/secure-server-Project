@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <title> 회원가입 </title>
     <link rel="stylesheet" th:href="@{/css/join.css}">
-
     <style>
         #if{
             width:0px;
             height: 0px;
             border: 0px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
         }
     </style>
 </head>
@@ -31,8 +34,9 @@
             <div>
                 <h3 class="join_title"><label for="email">이메일</label></h3>
                 <span class="box int_email">
-                        <input type="text" name="email" id="email"
-                               class="form-control" maxlength="100" th:field="*{email}">
+                        <input type="text" name="email" id="email" th:field="*{email}"
+<!--                               th:class="${error?.containsKey('emailError')} ? 'form-control field-error' : 'form-control'"-->
+                               class="form-control" maxlength="100" >
                     </span>
             </div>
 
@@ -71,8 +75,8 @@
                     <label for="id">아이디</label>
                 </h3>
                 <span class="box int_id">
-                        <input type="text" name="userId" id="id" class="form-control" maxlength="20"
-                        th:field="*{userId}">
+                        <input type="text" name="userId" id="id" maxlength="20"
+                                class="form-control">
                 </span>
                 <div class="field-error" th:if="${error?.containsKey('userIdError')}" th:text="${error['userIdError']}">
                     아이디 오류
