@@ -1,4 +1,4 @@
-package smilegate.securitySystem.repository;
+package smilegate.securitySystem.repository.MemberRepository;
 
 import smilegate.securitySystem.domain.Member;
 
@@ -6,11 +6,15 @@ import java.util.List;
 
 public interface MemberRepositoryInterface {
 
-    Member save(Member member);
+    void save(Member member);
 
     Member findById(Long id);
 
     List<Member> findAll();
+
+    List<Member> findByName(String name);
+
+    List<Member> findByEmail(String email);
 
     void clear();
 }

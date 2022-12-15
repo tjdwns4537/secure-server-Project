@@ -1,4 +1,4 @@
-package smilegate.securitySystem.repository;
+package smilegate.securitySystem.repository.MemberRepository;
 
 import smilegate.securitySystem.domain.Member;
 
@@ -21,10 +21,9 @@ public class MemberRepositoryImp implements MemberRepositoryInterface{
     }
 
     @Override
-    public Member save(Member member) {
+    public void save(Member member) {
         member.setId(++sequence);
         store.put(sequence, member);
-        return member;
     }
 
     @Override
@@ -35,6 +34,16 @@ public class MemberRepositoryImp implements MemberRepositoryInterface{
     @Override
     public List<Member> findAll() {
         return new ArrayList<>(store.values());
+    }
+
+    @Override
+    public List<Member> findByName(String name) {
+        return null;
+    }
+
+    @Override
+    public List<Member> findByEmail(String email) {
+        return null;
     }
 
     @Override
