@@ -3,7 +3,7 @@
 
 # Config
 *.properties
-
+*.yml
 
 ### Java ###
 # Compiled class file

@@ -28,8 +28,9 @@ dependencies {
 
 	//jpa
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'junit:junit:4.13.1'
 
-	//h2database
+    //h2database
 	runtimeOnly 'com.h2database:h2'
 
 	//Swagger

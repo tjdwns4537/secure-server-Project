@@ -27,6 +27,11 @@ public class Member {
 
     }
 
+    public Member(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
     public Member(String name, String userId, String email, String password, String phoneNumber) {
         this.name = name;
         this.userId = userId;

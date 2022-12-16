@@ -11,14 +11,16 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class memberServiceImp implements memberServiceInterface{
+public class MemberServiceImp implements MemberServiceInterface {
 
     private final MemberRepositoryInterface memberRepository;
 
     @Override
     @Transactional
-    public void join() {
-
+    public Long join(Member member) {
+        validateDuplicateMember(member);
+        memberRepository.save(member);
+        return member.getId();
     }
 
     @Override

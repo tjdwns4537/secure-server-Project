@@ -4,12 +4,12 @@ import smilegate.securitySystem.domain.Member;
 
 import java.util.List;
 
-public interface memberServiceInterface {
-    void join();
+public interface MemberServiceInterface {
+    Long join(Member member);
 
     void validateDuplicateMember(Member member);
 
-    public List<Member> findMembers();
+    List<Member> findMembers();
 
-    public Member findOne(Long member);
+    Member findOne(Long member);
 }
