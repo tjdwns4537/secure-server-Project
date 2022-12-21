@@ -16,32 +16,10 @@ var userName = document.querySelector('#name');
 var yy = document.querySelector('#yy');
 var mm = document.querySelector('#mm');
 var dd = document.querySelector('#dd');
-
 var gender = document.querySelector('#gender');
-
 var email = document.querySelector('#email');
-// var emailcheck = document.querySelector('#emailcheck');
-
 var mobile = document.querySelector('#mobile');
-
 var error = document.querySelectorAll('.error_next_box');
-
-// $('#email-btn').click(
-//     function (){
-//         $.ajax({
-//             url : "/member/emailConfirm",
-//             type : "POST",
-//             // data : $("#email_form").serialize(),
-//             success : function(data) {
-//                 alert("이메일이 전송되었습니다.")
-//             },
-//             error : function(e) {
-//                 console.log(e);
-//             }
-//         });
-//     }
-// )
-
 
 id.addEventListener("focusout", checkId);
 pw1.addEventListener("focusout", checkPw);

@@ -9,7 +9,7 @@ public interface MemberServiceInterface {
 
     void validateDuplicateMember(Member member);
 
-    List<Member> findMembers();
+    List<Member> findByAll();
 
-    Member findOne(Long member);
+    Member findById(Long member);
 }

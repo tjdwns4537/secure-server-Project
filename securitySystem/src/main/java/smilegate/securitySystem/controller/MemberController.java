@@ -1,17 +1,22 @@
 package smilegate.securitySystem.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import smilegate.securitySystem.domain.Member;
+import smilegate.securitySystem.domain.MemberForm;
 import smilegate.securitySystem.repository.MemberRepository.MemberRepositoryImp;
 import smilegate.securitySystem.repository.MemberRepository.MemberRepositoryInterface;
 import smilegate.securitySystem.service.EmailService.EmailServiceImp;
+import smilegate.securitySystem.service.MemberService.MemberServiceInterface;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +25,13 @@ import java.util.regex.Pattern;
 @Slf4j
 @Controller
 @RequestMapping("/member")
+@RequiredArgsConstructor
 public class MemberController {
 
-    @Autowired
-    EmailServiceImp emailService;
+    @Autowired private final EmailServiceImp emailService;
+    @Autowired private final MemberServiceInterface memberService;
 
     Map<String, String> error = new HashMap<>();
-    MemberRepositoryInterface memberRepository = MemberRepositoryImp.getInstance();
 
     String emailVerifyCode;
     boolean emailCheckFlag;
@@ -35,25 +40,38 @@ public class MemberController {
     @GetMapping("/join")
     public String joinPage(Model model) {
         emailCheckFlag = false;
-        model.addAttribute("member", new Member());
+        model.addAttribute("memberForm", new MemberForm());
         return "/member/join";
     }
 
     @PostMapping("/join")
     public String joinExecute(
-            @ModelAttribute Member member,
+            @Valid MemberForm memberForm,BindingResult bindingResult,
             @RequestParam String password2,
             RedirectAttributes redirectAttributes,
             Model model) {
+
+        if(bindingResult.hasErrors()){
+            return "/member/join";
+        }
+
         error.clear();
-        inputErrorCheck(member.getUserId(), member.getName(), member.getPassword(), member.getPhoneNumber(), password2, member.getEmail());
+        inputErrorCheck(memberForm.getUserId(), memberForm.getName(), memberForm.getPassword(), memberForm.getPhoneNumber(), password2, memberForm.getEmail());
+
         if(hasError()){
             log.info("log info:{}", error);
             model.addAttribute("error", error);
             return "/member/join";
         }
+
+        Member member = new Member();
+        member.setUserId(memberForm.getUserId());
+        member.setName(memberForm.getName());
+        member.setPassword(memberForm.getPassword());
+        member.setPhoneNumber(memberForm.getPhoneNumber());
         member.setEmail(globalEmail);
-        memberRepository.save(member);
+
+        memberService.join(member);
         redirectAttributes.addAttribute("memberId", member.getId());
         redirectAttributes.addAttribute("status", true);
         return "redirect:/member/" + member.getId();
@@ -71,49 +89,49 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     public String checkMemberPage(@PathVariable Long memberId, Model model) {
-        Member member = memberRepository.findById(memberId);
+        Member member = memberService.findById(memberId);
         model.addAttribute("member", member);
         return "/member/checkMember";
     }
 
     @GetMapping("/memberList")
     public String memberViewPage(Model model) {
-        List<Member> allMember = memberRepository.findAll();
+        List<Member> allMember = memberService.findByAll();
         model.addAttribute("members", allMember);
         return "/member/memberListView";
     }
 
     @GetMapping("/emailConfirm")
     public String emailVerify(Model model) {
-        model.addAttribute("member", new Member());
-        return "/member/join";
+        model.addAttribute("memberForm", new MemberForm());
+        return "/member/emailVerify";
     }
 
     @PostMapping("/emailConfirm")
     @ResponseBody
-    public String emailVerify(@RequestParam String email, Model model) throws Exception {
-        error.clear();
-        emailErrorCheck(email);
-        if(hasError()){
-            log.info("log info:{}", error);
-            model.addAttribute("error", error);
-            return "/member/emailConfirm";
+    public String emailVerify(@Valid @RequestParam String email,
+                              BindingResult bindingResult,
+                              Model model) throws Exception
+    {
+        if(bindingResult.hasErrors()){
+            return "/member/Confirm";
         }
+
         globalEmail = email;
         log.info("post email = {}", email);
         String s = emailService.sendSimpleMessage(email);
         emailVerifyCode = s;
-        return "";
+        return "redirect:/member/emailConfirm";
     }
 
     @PostMapping("/emailVerify")
     @ResponseBody
-    public void verifyCode(@RequestParam String emailCheck) {
+    public void verifyCode(@RequestParam String emailCheck, Model model) {
         log.info("Post Verify = {}", emailCheck);
         if(!emailVerifyCode.equals(emailCheck)){
             log.info("fail verify");
             emailCheckFlag = false;
-            error.put("verifyError", "인증번호를 잘못 입력하셨습니다.");
+            error.put("verifyError", "인증번호가 다릅니다.");
         }
         if(emailVerifyCode.equals(emailCheck)){
             log.info("success verify");
@@ -127,28 +145,24 @@ public class MemberController {
     }
 
     public void inputErrorCheck(String userId, String name, String password1, String phoneNumber, String password2, String email) {
-        nameEmptyErrorCheck(name);
+//        nameEmptyErrorCheck(name);
         nameRuleErrorCheck(name);
         phoneNumberErrorCheck(phoneNumber);
         passwordErrorCheck(password1, password2);
         emailVerifyPassError();
-        userIdErrorCheck(userId);
+//        userIdErrorCheck(userId);
     }
 
-    public void userIdErrorCheck(String str) {
-        if(!StringUtils.hasText(str)) error.put("userIdError", "아이디를 입력해야합니다.");
-    }
+//    public void userIdErrorCheck(String str) {
+//        if(!StringUtils.hasText(str)) error.put("userIdError", "아이디를 입력해야합니다.");
+//    }
     public void emailVerifyPassError(){
         if(!emailCheckFlag) error.put("emailVerifyError", "email 검증을 완료해야합니다.");
     }
 
-    public void emailErrorCheck(String str) {
-        if(!StringUtils.hasText(str)) error.put("emailError", "이메일이 비어있습니다.");
-    }
-
-    public void nameEmptyErrorCheck(String str) {
-        if(!StringUtils.hasText(str)) error.put("nameError", "이름이 비어있습니다.");
-    }
+//    public void nameEmptyErrorCheck(String str) {
+//        if(!StringUtils.hasText(str)) error.put("nameError", "이름이 비어있습니다.");
+//    }
 
     public void nameRuleErrorCheck(String str){
         if(StringUtils.containsWhitespace(str)) error.put("nameError", "이름에 공백이 들어있습니다.");

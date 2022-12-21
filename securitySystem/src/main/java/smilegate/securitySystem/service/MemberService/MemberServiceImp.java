@@ -32,12 +32,12 @@ public class MemberServiceImp implements MemberServiceInterface {
     }
 
     @Override
-    public List<Member> findMembers() {
+    public List<Member> findByAll() {
         return memberRepository.findAll();
     }
 
     @Override
-    public Member findOne(Long id) {
+    public Member findById(Long id) {
         return memberRepository.findById(id);
     }
 }

@@ -4,19 +4,88 @@
     <meta charset="UTF-8">
     <title>이메일 인증하기</title>
     <link rel="stylesheet" th:href="@{/css/join.css}">
+    <style>
+        .emailbox {
+            display: block;
+            width: 70%;
+            height: 51px;
+            border: solid 1px #dadada;
+            padding: 10px 14px 10px 14px;
+            box-sizing: border-box;
+            background: #fff;
+            position: relative;
+            left:30px;
+        }
+
+        .emailCheckBox {
+            display: block;
+            width: 40%;
+            height: 51px;
+            border: solid 1px #dadada;
+            padding: 10px 14px 10px 14px;
+            box-sizing: border-box;
+            background: #fff;
+            position: relative;
+            left:30px;
+        }
+
+        .emailBtn {
+            display: inline-block;
+            position: relative;
+            left:30px;
+        }
+
+        .join_title {
+            display: block;
+            position: relative;
+            left:30px;
+        }
+    </style>
 </head>
 <body>
 <script th:src="@{/js/main.js}"></script>
+
 <script>
     function goParnet(){
         opener.document.getElementById("email-check").value = document.getElementById("child-email-check").value
     }
 </script>
-<div>
-    <h3 class="join_title">인증 번호</h3>
-    <input type="text" name="child-email-check" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
-</div>
-<button type="button" onclick="goParent()"> 인증하기 </button>
+
+<form th:action="@{/member/emailConfirm}" th:object="${memberForm}" method="post" target="param">
+    <div>
+        <h3 class="join_title"><label for="email">이메일</label></h3>
+        <span class="emailbox int_email">
+            <input type="text" name="email" id="email" th:field="*{email}" class="form-control" maxlength="100" placeholder="이메일 입력">
+        </span>
+    </div>
+
+    <div class="field-error" th:if="${error?.containsKey('emailError')}" th:text="${error['emailError']}">
+        이메일 오류 메시지
+    </div>
+
+    <!-- 이메일 인증 번호 요청 버튼 -->
+    <input class="emailBtn" type="submit" value="인증번호받기" id="email-btn"/>
+</form>
+
+<form th:action="@{/member/emailVerify}" method="post" target="param">
+    <div>
+        <h3 class="join_title">인증 번호</h3>
+        <span class="emailCheckBox int_email">
+            <input type="text" name="emailCheck" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
+        </span>
+    </div>
+
+    <!-- 이메일 인증 번호 요청 버튼 -->
+    <input class="emailBtn" type="submit" value="인증번호 확인" id="email-verify"/>
+    <div class="field-error" th:if="${error?.containsKey('emailVerifyError')}" th:text="${error['emailVerifyError']}">
+        이메일 검증 오류 메시지
+    </div>
+</form>
+
+<script>
+    var emailCheck = document.querySelector('#email-check');
+
+</script>
 
 </body>
 

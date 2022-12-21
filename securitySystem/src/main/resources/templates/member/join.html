@@ -25,50 +25,55 @@
 
 <!-- wrapper -->
 <div id="wrapper">
-
-    <!-- content-->
+<!--     content-->
     <div id="content">
-        <iframe id="if" name="param"></iframe>
+<!--        <iframe id="if" name="param"></iframe>-->
+        <button type="button" class="email_verify">이메일 인증하기</button>
+        <script>
+            var emailVerify = document.querySelector('.email_verify');
+            emailVerify.addEventListener('click',function (){
+                window.open('/member/emailConfirm', "이메일인증하기", "width=800, height=350, top=30, left=30");
+            })
+        </script>
+
         <!-- EMAIL -->
-        <form th:action="@{/member/emailConfirm}" th:object="${member}" method="post" target="param">
-            <div>
-                <h3 class="join_title"><label for="email">이메일</label></h3>
-                <span class="box int_email">
-                        <input type="text" name="email" id="email" th:field="*{email}"
-<!--                               th:class="${error?.containsKey('emailError')} ? 'form-control field-error' : 'form-control'"-->
-                               class="form-control" maxlength="100" >
-                    </span>
-            </div>
+<!--        <form th:action="@{/member/emailConfirm}" th:object="${memberForm}" method="post" target="param">-->
+<!--            <div>-->
+<!--                <h3 class="join_title"><label for="email">이메일</label></h3>-->
+<!--                <span class="box int_email">-->
+<!--                        <input type="text" name="email" id="email" th:field="*{email}" class="form-control" maxlength="100">-->
+<!--&lt;!&ndash;                               th:class="${error?.containsKey('emailError')} ? 'form-control field-error' : 'form-control'"&ndash;&gt;-->
+<!--                    </span>-->
+<!--            </div>-->
 
-            <div class="field-error" th:if="${error?.containsKey('emailError')}" th:text="${error['emailError']}">
-                이메일 오류 메시지
-            </div>
+<!--            <div class="field-error" th:if="${error?.containsKey('emailError')}" th:text="${error['emailError']}">-->
+<!--                이메일 오류 메시지-->
+<!--            </div>-->
 
-            <!-- 이메일 인증 번호 요청 버튼 -->
-            <input type="submit"
-                   value="인증번호받기"
-                   id="email-btn"
-            />
-        </form>
+<!--            &lt;!&ndash; 이메일 인증 번호 요청 버튼 &ndash;&gt;-->
+<!--            <input type="submit"-->
+<!--                   value="인증번호받기"-->
+<!--                   id="email-btn"-->
+<!--            />-->
+<!--        </form>-->
 
-        <form th:action="@{/member/emailVerify}" method="post" target="param">
-            <div>
-                <h3 class="join_title">인증 번호</h3>
-                <input type="text" name="emailCheck" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">
-            </div>
+<!--        <form th:action="@{/member/emailVerify}" method="post" target="param">-->
+<!--            <div>-->
+<!--                <h3 class="join_title">인증 번호</h3>-->
+<!--                <input type="text" name="emailCheck" id="email-check" class="form-control" maxlength="100" placeholder="인증번호 입력">-->
+<!--            </div>-->
 
-            <!-- 이메일 인증 번호 요청 버튼 -->
-            <input type="submit"
-                   value="인증번호 확인"
-                   id="email-verify"
-            />
-            <div class="field-error" th:if="${error?.containsKey('emailVerifyError')}" th:text="${error['emailVerifyError']}">
-                이메일 검증 오류 메시지
-            </div>
-        </form>
+<!--            &lt;!&ndash; 이메일 인증 번호 요청 버튼 &ndash;&gt;-->
+<!--            <input type="submit"-->
+<!--                   value="인증번호 확인"-->
+<!--                   id="email-verify"-->
+<!--            />-->
+<!--            <div class="field-error" th:if="${error?.containsKey('emailVerifyError')}" th:text="${error['emailVerifyError']}">-->
+<!--                이메일 검증 오류 메시지-->
+<!--            </div>-->
+<!--        </form>-->
 
-        <form th:action="@{/member/join}" th:object="${member}" method="post">
-
+        <form th:action="@{/member/join}" th:object="${memberForm}" method="post">
             <!-- ID -->
             <div>
                 <h3 class="join_title">
@@ -76,7 +81,8 @@
                 </h3>
                 <span class="box int_id">
                         <input type="text" name="userId" id="id" maxlength="20"
-                                class="form-control">
+                                class="form-control" th:field="*{userId}"
+                        >
                 </span>
                 <div class="field-error" th:if="${error?.containsKey('userIdError')}" th:text="${error['userIdError']}">
                     아이디 오류
@@ -102,7 +108,7 @@
             <div>
                 <h3 class="join_title"><label for="pswd2">비밀번호 재확인</label></h3>
                 <span class="box int_pass_check">
-                        <input type="text" name="password2" id="pswd2" class="form-control" maxlength="20">
+                        <input type="text" th:field="*{password2}" name="password2" id="pswd2" class="form-control" maxlength="20">
                         <img th:src="@{/Image/m_icon_check_disable.png}" id="pswd2_img1" class="pswdImg">
                     </span>
                 <span class="error_next_box"></span>
@@ -114,7 +120,9 @@
                     <label for="name">이름</label></h3>
                 <span class="box int_name">
                         <input type="text" name="name" id="name"
-                               class="form-control" maxlength="12" th:field="*{name}">
+                               class="form-control" maxlength="12" th:field="*{name}"
+                        >
+
                 </span>
                 <div class="field-error" th:if="${error?.containsKey('nameError')}" th:text="${error['nameError']}">
                     이름 오류
