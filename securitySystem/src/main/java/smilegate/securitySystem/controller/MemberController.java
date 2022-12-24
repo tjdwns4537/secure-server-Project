@@ -1,5 +1,8 @@
 package smilegate.securitySystem.controller;
 
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import smilegate.securitySystem.domain.EmailForm;
 import smilegate.securitySystem.domain.Member;
 import smilegate.securitySystem.domain.MemberForm;
 import smilegate.securitySystem.repository.MemberRepository.MemberRepositoryImp;
@@ -17,6 +21,8 @@ import smilegate.securitySystem.service.EmailService.EmailServiceImp;
 import smilegate.securitySystem.service.MemberService.MemberServiceInterface;
 
 import javax.validation.Valid;
+import java.time.Duration;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,13 +62,13 @@ public class MemberController {
         }
 
         error.clear();
-        inputErrorCheck(memberForm.getUserId(), memberForm.getName(), memberForm.getPassword(), memberForm.getPhoneNumber(), password2, memberForm.getEmail());
+        inputErrorCheck(memberForm.getUserId(), memberForm.getName(), memberForm.getPassword(), memberForm.getPhoneNumber(), password2);
 
-        if(hasError()){
-            log.info("log info:{}", error);
-            model.addAttribute("error", error);
-            return "/member/join";
-        }
+//        if(hasError()){
+//            log.info("log info:{}", error);
+//            model.addAttribute("error", error);
+//            return "/member/join";
+//        }
 
         Member member = new Member();
         member.setUserId(memberForm.getUserId());
@@ -103,39 +109,42 @@ public class MemberController {
 
     @GetMapping("/emailConfirm")
     public String emailVerify(Model model) {
-        model.addAttribute("memberForm", new MemberForm());
+        model.addAttribute("emailForm", new EmailForm());
         return "/member/emailVerify";
     }
 
     @PostMapping("/emailConfirm")
     @ResponseBody
-    public String emailVerify(@Valid @RequestParam String email,
-                              BindingResult bindingResult,
-                              Model model) throws Exception
+    public String emailVerify(
+            @RequestParam String email,
+            BindingResult bindingResult,
+            Model model) throws Exception
     {
-        if(bindingResult.hasErrors()){
-            return "/member/Confirm";
-        }
+//        if(bindingResult.hasErrors()){
+//            return "/member/Confirm";
+//        }
 
         globalEmail = email;
         log.info("post email = {}", email);
         String s = emailService.sendSimpleMessage(email);
         emailVerifyCode = s;
-        return "redirect:/member/emailConfirm";
+        return "redirect:/member/join";
     }
 
     @PostMapping("/emailVerify")
     @ResponseBody
-    public void verifyCode(@RequestParam String emailCheck, Model model) {
+    public String verifyCode(@RequestParam String emailCheck, Model model) {
         log.info("Post Verify = {}", emailCheck);
         if(!emailVerifyCode.equals(emailCheck)){
             log.info("fail verify");
             emailCheckFlag = false;
             error.put("verifyError", "인증번호가 다릅니다.");
+            return "redirect:/member/emailConfirm";
         }
-        if(emailVerifyCode.equals(emailCheck)){
+        else {
             log.info("success verify");
             emailCheckFlag = true;
+            return "/member/join";
         }
     }
 
@@ -144,12 +153,12 @@ public class MemberController {
         return false;
     }
 
-    public void inputErrorCheck(String userId, String name, String password1, String phoneNumber, String password2, String email) {
+    public void inputErrorCheck(String userId, String name, String password1, String phoneNumber, String password2) {
 //        nameEmptyErrorCheck(name);
         nameRuleErrorCheck(name);
         phoneNumberErrorCheck(phoneNumber);
         passwordErrorCheck(password1, password2);
-        emailVerifyPassError();
+//        emailVerifyPassError();
 //        userIdErrorCheck(userId);
     }
 
@@ -192,4 +201,19 @@ public class MemberController {
         if(!result) return true;
         return false;
     }
+
+    public String makeJwtToken() {
+        Date now = new Date();
+
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // (1)
+                .setIssuer("fresh") // (2)
+                .setIssuedAt(now) // (3)
+                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis())) // (4)
+                .claim("id", "아이디") // (5)
+                .claim("email", "ajufresh@gmail.com")
+                .signWith(SignatureAlgorithm.HS256, "secret") // (6)
+                .compact();
+    }
+
 }
