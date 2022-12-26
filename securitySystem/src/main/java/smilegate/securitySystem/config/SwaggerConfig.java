@@ -1,4 +1,4 @@
-package smilegate.securitySystem.Config;
+package smilegate.securitySystem.config;
 
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.PathSelectors;

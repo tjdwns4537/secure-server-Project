@@ -5,7 +5,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -15,10 +23,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import smilegate.securitySystem.domain.EmailForm;
 import smilegate.securitySystem.domain.Member;
 import smilegate.securitySystem.domain.MemberForm;
+import smilegate.securitySystem.dto.TokenDto;
 import smilegate.securitySystem.repository.MemberRepository.MemberRepositoryImp;
 import smilegate.securitySystem.repository.MemberRepository.MemberRepositoryInterface;
 import smilegate.securitySystem.service.EmailService.EmailServiceImp;
 import smilegate.securitySystem.service.MemberService.MemberServiceInterface;
+import smilegate.securitySystem.service.SecurityService.JwtFilter;
+import smilegate.securitySystem.service.SecurityService.TokenProvider;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.validation.Valid;
 import java.time.Duration;
@@ -31,14 +43,25 @@ import java.util.regex.Pattern;
 @Slf4j
 @Controller
 @RequestMapping("/member")
-@RequiredArgsConstructor
 public class MemberController {
 
-    @Autowired private final EmailServiceImp emailService;
-    @Autowired private final MemberServiceInterface memberService;
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final EmailServiceImp emailService;
+    private final MemberServiceInterface memberService;
+
+    public MemberController(
+            TokenProvider tokenProvider,
+            AuthenticationManagerBuilder authenticationManagerBuilder,
+            EmailServiceImp emailService,
+            MemberServiceInterface memberService) {
+        this.tokenProvider = tokenProvider;
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.emailService = emailService;
+        this.memberService = memberService;
+    }
 
     Map<String, String> error = new HashMap<>();
-
     String emailVerifyCode;
     boolean emailCheckFlag;
     String globalEmail;
@@ -76,6 +99,9 @@ public class MemberController {
         member.setPassword(memberForm.getPassword());
         member.setPhoneNumber(memberForm.getPhoneNumber());
         member.setEmail(globalEmail);
+
+        String token = authorize(memberForm.getName(), memberForm.getPassword());
+        log.info("token : {}",token);
 
         memberService.join(member);
         redirectAttributes.addAttribute("memberId", member.getId());
@@ -201,19 +227,26 @@ public class MemberController {
         if(!result) return true;
         return false;
     }
+    //ResponseEntity<TokenDto>
+    public String authorize(String name, String password) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(name, password);
 
-    public String makeJwtToken() {
-        Date now = new Date();
+        // authenticate 메소드 실행시 loadUserByUsername 메소드 실행됨
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // (1)
-                .setIssuer("fresh") // (2)
-                .setIssuedAt(now) // (3)
-                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis())) // (4)
-                .claim("id", "아이디") // (5)
-                .claim("email", "ajufresh@gmail.com")
-                .signWith(SignatureAlgorithm.HS256, "secret") // (6)
-                .compact();
+        // 결과를 Security Context에 저장
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 그 후 그 인증정보를 기준으로 해서 JWT Token 생성
+        String jwt = tokenProvider.createToken(authentication);
+
+        // 그 토큰을 response 헤더에 넣어줌
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+
+        return jwt;
+//        return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
     }
 
 }
