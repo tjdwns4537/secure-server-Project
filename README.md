@@ -49,17 +49,16 @@
     -> 새로고침하면 상품상세페이지를 다시 요청하게 되는 것 ( GET )
 - ex. return “redirect:/member/memberList/” + member.getId();
 <br/>
-<br/>
 -정리: 데이터를 저장하는 메서드에는 이러한 리다이렉트 작업이 필요함
- 1) get : 회원가입 페이지 호출
- 2) form action, button submit 을 통해 입력 폼 만들고 post 로 전송
- 3) post : 회원가입 페이지에 post 로 데이터가 들어오면 로직 실행
- 4) 레포지토리, 모델에 데이터 저장
- 5) 리다이렉트를 통해 /member/member.getId() 전송
- 6) get : /member/{memeberId} 로 저장 회원 출력 페이지 호출
- 7) 레포지토리에서 findById(memeberId) 를 통해 멤버 찾기
- 8) 모델에 저장
- 9) /memeber/checkMember.html 호출
+ 1) get : 회원가입 페이지 호출       
+ 2) form action, button submit 을 통해 입력 폼 만들고 post 로 전송      
+ 3) post : 회원가입 페이지에 post 로 데이터가 들어오면 로직 실행      
+ 4) 레포지토리, 모델에 데이터 저장      
+ 5) 리다이렉트를 통해 /member/member.getId() 전송      
+ 6) get : /member/{memeberId} 로 저장 회원 출력 페이지 호출      
+ 7) 레포지토리에서 findById(memeberId) 를 통해 멤버 찾기      
+ 8) 모델에 저장      
+ 9) /memeber/checkMember.html 호출     
 <br/>
 <br/>
 ### 2. 버튼을 submit type 으로 해야만 정상작동이 확인되는데, 이러면 페이지가 새로고침되기 때문에 입력한 데이터가 날라감
