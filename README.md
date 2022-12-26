@@ -1,90 +1,93 @@
-# smilegateProject
-스마일게이트 프로젝트
-
-# Project Title
-
-One Paragraph of project description goes here
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+# 인증 서버
+## 역할
+|서비스|역할|
+|---|---|
+|채팅 서버|- 채팅 서비스를 제공하기 위해 웹 소켓을 이용해 서버와 클라이언트간 통신<br>- 채팅과 동시에 하나의 로비 역할을 담당<br>- 사용자의 세션값을 토대로 상태 정보값을 TCP를 통해 상태관리 서버로 전송|
+## 기술 스택
+- Java 11
+- Springboot 3.0.1
+- Spring MVC
+- JPA
+- H2Database
+## 제공 기능
+|기능|설명|
+|---|---|
+|이메일 인증 | 기본적인 인증 기능 |
+|웹 어플리케이션 <br> 로그인/회원가입 <br> 회원/회원리스트 조회 | H2Database와 Thymeleaf를 활용한 회원 관리 기능|
+|JWT 토큰 생성 | 회원 아이디, 비밀번호를 활용한 토큰 생성 및 관리|
+### 이메일 인증
+- EmailConfig 클래스에서 mail server 설정을 세팅해줍니다.
+- EmailServiceImp 클래스에서 메일 내용과 인증 기능을 수행합니다.
+### 회원가입
+- @Valid, errorCheck 메소드를 통해 입력에 문제가 없는지 확인합니다.
+- MVC, Thymeleaf를 활용해 회원 가입 메소드를 구현합니다.
+- 만들고자 하였던 검증 시스템 :
+    1) 타입 검증 : 이름에 숫자가 들어가면 오류 처리
+    2) 필드 검증
+     -> 이름에 공백 x
+     -> 필수 입력 값 존재
+     -> 이름 최대 입력 수 : 12
+     -> 휴대폰 번호에 “-” 금지
+     -> 휴대폰 번호 자리수는 11자리
+     -> 비밀번호 골뱅이, 영문자, 숫자 조합 확인
+     -> 비밀번호 확인, 재확인 문자가 같은지 확인
+    3) 검증 실패시 다른 페이지로 넘어가는 것이 아닌 데이터 유지한 상태로 알림
+### JWT토큰 생성
+- SecuritySerivce 패키지에 JWT 토큰을 받아오는 메소드를 작성하였습니다.
+- 아직 로그인 화면과 정상적인 연동을 하지 못해 진행중에 있습니다.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+## 프로젝트 진행 중 이슈
+<br>
+### 1. 데이터 중복 저장 문제
+- 로직흐름: 상품 목록 -> 상품 등록 폼 -> 상품 저장 -> 상품 목록
+- 새로 고침 : 마지막에 했던 행위를 다시 하는 것
+- 상품 목록을 새로 고침하면 마지막에 서버에 전송한 데이터를 다시 전송하므로
+  의미없는 데이터가 계속 저장됨
+- 해결 방법 : 리다이렉트를 사용해서 url을 상품 상세페이지로 보내버리는 방법
+    -> 새로고침하면 상품상세페이지를 다시 요청하게 되는 것 ( GET )
+- ex. return “redirect:/member/memberList/” + member.getId();
+<br>
+<br>
+-정리: 데이터를 저장하는 메서드에는 이러한 리다이렉트 작업이 필요함
+ 1) get : 회원가입 페이지 호출
+ 2) form action, button submit 을 통해 입력 폼 만들고 post 로 전송
+ 3) post : 회원가입 페이지에 post 로 데이터가 들어오면 로직 실행
+ 4) 레포지토리, 모델에 데이터 저장
+ 5) 리다이렉트를 통해 /member/member.getId() 전송
+ 6) get : /member/{memeberId} 로 저장 회원 출력 페이지 호출
+ 7) 레포지토리에서 findById(memeberId) 를 통해 멤버 찾기
+ 8) 모델에 저장
+ 9) /memeber/checkMember.html 호출
+<br>
+<br>
+### 2. 버튼을 submit type 으로 해야만 정상작동이 확인되는데, 이러면 페이지가 새로고침되기 때문에 입력한 데이터가 날라감
+- button type = submit 대신 iframe 와 input, form 태그를 적절히 활용해 해결 완료
+<br>
+<br>
+### 3. 이메일 인증 -> 이메일 검증, 회원가입 진행, 이메일이 비어있다는 에러 발생
+- 서로 다른 폼태그와 버튼을 통해 입력값을 받다보니 서로 다른 메서드에서 모델에 데이터를 담음
+- 이메일 전역 변수를 만들어서 거기에 담는 형태로 구성
+<br>
+<br>
+### 4. 오류가 발생하는 경우 다시 입력 폼으로 돌아옴, 그런데 사용자 입력 데이터가 초기화됨, 입력 데이터를 그냥 놔두는 방법에 대한 문제
+- `<input th:field=“*{password}“>` 와 같이 도메인 클래스 멤버 변수를 안에 넣어준다.
+- 오류났을 때 다시 불러오는 페이지가 /join 이라면, 컨트롤러에서 해당 주소 불러오는 메서드에서
+  model.addAttribute(“member”,new Member());
+  return “/member/join”; 을 해준다
+- join 페이지에서 다시 member 에 해당하는 데이터를 받아와 출력한다.
+- 이를 통해, 오류가 나더라도 입력되어 있던 데이터르 다시 보여준다.
+<br>
+<br>
+<br>
+## 참고
+- springMVC: 인프런 '김영한 Spring MVC'
+- JWT : 인프런 'Spring Boot JWT Tutorial'
+- JPA : 인프런 '김영한 Spring JPA'
+- WEB : 부트스트랩 '로그인/회원가입 페이지'
+- HTTP : 인프런 '김영한 HTTP API'

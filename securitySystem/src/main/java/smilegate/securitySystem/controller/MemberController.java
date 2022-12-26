@@ -100,9 +100,6 @@ public class MemberController {
         member.setPhoneNumber(memberForm.getPhoneNumber());
         member.setEmail(globalEmail);
 
-        String token = authorize(memberForm.getName(), memberForm.getPassword());
-        log.info("token : {}",token);
-
         memberService.join(member);
         redirectAttributes.addAttribute("memberId", member.getId());
         redirectAttributes.addAttribute("status", true);
@@ -111,6 +108,8 @@ public class MemberController {
 
     @GetMapping("/login")
     public String loginPage() {
+//        String token = authorize(memberForm.getName(), memberForm.getPassword());
+//        log.info("token : {}",token);
         return "/member/login";
     }
 
