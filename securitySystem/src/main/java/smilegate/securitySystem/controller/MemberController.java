@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import smilegate.securitySystem.domain.EmailForm;
+import smilegate.securitySystem.domain.LoginForm;
 import smilegate.securitySystem.domain.Member;
 import smilegate.securitySystem.domain.MemberForm;
 import smilegate.securitySystem.dto.TokenDto;
@@ -108,14 +109,14 @@ public class MemberController {
 
     @GetMapping("/login")
     public String loginPage() {
-//        String token = authorize(memberForm.getName(), memberForm.getPassword());
-//        log.info("token : {}",token);
         return "/member/login";
     }
 
     @PostMapping("/login")
-    public String loginExecute(Model model) {
-        return "/index";
+    public String loginExecute(LoginForm loginForm, Model model) {
+        String token = makeJwtToken(loginForm.getUserId(), loginForm.getPassword());
+        log.info("token : {}",token);
+        return "/main";
     }
 
     @GetMapping("/{memberId}")
@@ -246,6 +247,20 @@ public class MemberController {
 
         return jwt;
 //        return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+    }
+
+    public String makeJwtToken(String userId,String password) {
+        Date now = new Date();
+
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // (1)
+                .setIssuer("fresh") // (2)
+                .setIssuedAt(now) // (3)
+                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis())) // (4)
+                .claim("userId", userId) // (5)
+                .claim("password", password)
+                .signWith(SignatureAlgorithm.HS256, "secret") // (6)
+                .compact();
     }
 
 }
