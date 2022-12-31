@@ -2,7 +2,7 @@
 ## 역할
 |서비스|역할|
 |---|---|
-|채팅 서버|- 채팅 서비스를 제공하기 위해 웹 소켓을 이용해 서버와 클라이언트간 통신<br>- 채팅과 동시에 하나의 로비 역할을 담당<br>- 사용자의 세션값을 토대로 상태 정보값을 TCP를 통해 상태관리 서버로 전송|
+|인증 서버|- 인증 서비스를 제공하기 위해 Spring Security 활용 <br>- Spring MVC를 활용
 ## 기술 스택
 - Java 11
 - Springboot 3.0.1
@@ -14,7 +14,7 @@
 |---|---|
 |이메일 인증 | 기본적인 인증 기능 |
 |웹 어플리케이션 <br> 로그인/회원가입 <br> 회원/회원리스트 조회 | H2Database와 Thymeleaf를 활용한 회원 관리 기능|
-|JWT 토큰 생성 | 회원 아이디, 비밀번호를 활용한 토큰 생성 및 관리|
+|Spring Security | 회원 로그인에 Spring Security 를 활용
 ### 이메일 인증
 - EmailConfig 클래스에서 mail server 설정을 세팅해줍니다.
 - EmailServiceImp 클래스에서 메일 내용과 인증 기능을 수행합니다.
@@ -32,14 +32,20 @@
      -> 비밀번호 골뱅이, 영문자, 숫자 조합 확인
      -> 비밀번호 확인, 재확인 문자가 같은지 확인
     3) 검증 실패시 다른 페이지로 넘어가는 것이 아닌 데이터 유지한 상태로 알림
-### JWT토큰 생성
-- SecuritySerivce 패키지에 JWT 토큰을 받아오는 메소드를 작성하였습니다.
-- 아직 로그인 화면과 정상적인 연동을 하지 못해 진행중에 있습니다.
+### Spring Security
+- Security Config 에 Spring Security 에 대한 코드를 작성
+- login 컨트롤러와 연동
 <br/>
 <br/>
 <br/>
 
 ## 프로젝트 진행 중 이슈
+
+## Spring MVC
+<br/>
+<br/>
+<br/>
+
 ### 1. 데이터 중복 저장 문제
 - 로직흐름: 상품 목록 -> 상품 등록 폼 -> 상품 저장 -> 상품 목록
 - 새로 고침 : 마지막에 했던 행위를 다시 하는 것
@@ -84,8 +90,20 @@
 <br/>
 <br/>
 
+## Spring Security
+<br/>
+<br/>
+<br/>
+
+### 1. CSRF 문제
+    http.loginPage("/member/login") 를 통해 커스텀 로그인 페이지를 만들었는데,
+    성공했을 때 POST 로 login-do 로 들어가야하는데 계속 GET 으로 login 만 접속한다.
+- 해결 방법 : .csrf().disable(); 옵션 추가
+
+
 ## 참고
-- springMVC: 인프런 '김영한 Spring MVC'
+- spring MVC : 인프런 '김영한 Spring MVC'
+- Spring Security : 인프런 'Spring Boot 기반으로 개발하는 Spring Security'
 - JWT : 인프런 'Spring Boot JWT Tutorial'
 - JPA : 인프런 '김영한 Spring JPA'
 - WEB : 부트스트랩 '로그인/회원가입 페이지'
