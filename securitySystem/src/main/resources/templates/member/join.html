@@ -31,7 +31,7 @@
 
 <!-- header -->
 <div id="header">
-    <a th:href="@{/member/join}" title="회원가입 페이지"><img th:src="@{/Image/smilegatelogo.png}" id="logo"></a>
+    <a th:href="@{/member/join}" title="회원가입 페이지"><img th:src="@{/image/smilegatelogo.png}" id="logo"></a>
 </div>
 
 <!-- wrapper -->
@@ -60,7 +60,6 @@
                         <input type="text" name="password" id="pswd1" class="form-control" maxlength="20"
                         th:field="*{password}">
                         <span id="alertTxt">사용불가</span>
-<!--                        <img th:src="@{/Image/m_icon_pass.png}" id="pswd1_img1" class="pswdImg">-->
                 </span>
                 <span class="error_next_box"></span>
                 <div class="field-error" th:if="${error?.containsKey('passwordError')}" th:text="${error['passwordError']}">
@@ -73,7 +72,6 @@
                 <h3 class="join_title"><label for="pswd2">비밀번호 재확인</label></h3>
                 <span class="box int_pass_check">
                         <input type="text" th:field="*{password2}" name="password2" id="pswd2" class="form-control" maxlength="20">
-<!--                        <img th:src="@{/Image/m_icon_check_disable.png}" id="pswd2_img1" class="pswdImg">-->
                 </span>
                 <span class="error_next_box"></span>
             </div>

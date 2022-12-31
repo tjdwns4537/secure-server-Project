@@ -1,6 +1,7 @@
 package smilegate.securitySystem.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -8,7 +9,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import smilegate.securitySystem.domain.EmailForm;
-import smilegate.securitySystem.domain.LoginForm;
 import smilegate.securitySystem.domain.Member;
 import smilegate.securitySystem.domain.MemberForm;
 import smilegate.securitySystem.service.EmailService.EmailServiceImp;
@@ -16,10 +16,7 @@ import smilegate.securitySystem.service.MemberService.JoinFormValidate;
 import smilegate.securitySystem.service.MemberService.MemberServiceInterface;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Controller
@@ -29,11 +26,13 @@ public class MemberController {
     private final EmailServiceImp emailService;
     private final MemberServiceInterface memberService;
     private JoinFormValidate joinFormValidate;
+    private PasswordEncoder passwordEncoder;
 
-    public MemberController(EmailServiceImp emailService, MemberServiceInterface memberService, JoinFormValidate joinFormValidate) {
+    public MemberController(EmailServiceImp emailService, MemberServiceInterface memberService, JoinFormValidate joinFormValidate,PasswordEncoder passwordEncoder) {
         this.emailService = emailService;
         this.memberService = memberService;
         this.joinFormValidate = joinFormValidate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     String emailVerifyCode;
@@ -71,7 +70,7 @@ public class MemberController {
         Member member = new Member();
         member.setUserId(memberForm.getUserId());
         member.setName(memberForm.getName());
-        member.setPassword(memberForm.getPassword());
+        member.setPassword(passwordEncoder.encode(memberForm.getPassword()));
         member.setPhoneNumber(memberForm.getPhoneNumber());
         member.setEmail(globalEmail);
 
@@ -88,7 +87,7 @@ public class MemberController {
     }
 
     @PostMapping("/login-do")
-    public String loginExecute(LoginForm loginForm, Model model) {
+    public String loginExecute(Model model) {
         log.info("[POST] login");
         return "/main/main";
     }
