@@ -40,8 +40,10 @@
 <br/>
 
 ## 프로젝트 진행 중 이슈
+<br/>
+<br/>
 
-## Spring MVC
+## ⭐️ Spring MVC
 <br/>
 <br/>
 <br/>
@@ -90,8 +92,7 @@
 <br/>
 <br/>
 
-## Spring Security
-<br/>
+## ⭐️ Spring Security
 <br/>
 <br/>
 
@@ -99,6 +100,10 @@
     http.loginPage("/member/login") 를 통해 커스텀 로그인 페이지를 만들었는데,
     성공했을 때 POST 로 login-do 로 들어가야하는데 계속 GET 으로 login 만 접속한다.
 - 해결 방법 : .csrf().disable(); 옵션 추가
+
+<br/>
+<br/>
+<br/>
 
 
 ## 참고
