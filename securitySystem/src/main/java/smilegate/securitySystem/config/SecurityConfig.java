@@ -1,5 +1,6 @@
 package smilegate.securitySystem.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -22,16 +24,23 @@ import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception { // 사용자 생성
+//        String password = passwordEncoder().encode("1234");
+//
+//        auth.inMemoryAuthentication().withUser("user").password(password).roles("USER");
+//        auth.inMemoryAuthentication().withUser("admin").password(password).roles("ADMIN");
+//    }
+
+    private UserDetailsService userDetailsService;
+
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception { // 사용자 생성
-        String password = passwordEncoder().encode("1234");
-
-        auth.inMemoryAuthentication().withUser("user").password(password).roles("USER");
-        auth.inMemoryAuthentication().withUser("admin").password(password).roles("ADMIN");
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
     }
-
 
     @Override
     public void configure(WebSecurity web) throws Exception {

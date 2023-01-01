@@ -47,4 +47,10 @@ public class JpaMemberRepository implements MemberRepositoryInterface{
                 "select m from Member m where m.email = :email", Member.class
         ).setParameter("email", email).getResultList();
     }
+
+    public List<Member> findByUserId(String userId) {
+        return em.createQuery(
+                "select m from Member m where m.userId =: userId", Member.class
+        ).setParameter("userId", userId).getResultList();
+    }
 }
